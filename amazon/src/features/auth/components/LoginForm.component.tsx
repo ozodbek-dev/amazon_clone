@@ -44,10 +44,6 @@ const LoginFormComponent = () => {
         }
         setErrorMsg("");
 
-        const newUser: NewUser = {
-            email,
-            password,
-        }
 
 
         clearForm();
@@ -134,7 +130,7 @@ const LoginFormComponent = () => {
                 <small>
                     <span>Buying for work?{" "}
                         <a
-                            herf="#"
+                            href="#"
                             style={{color: "#0000ee"}}>Create free business account</a>
                 </span>
                 </small>
