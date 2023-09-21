@@ -1,15 +1,56 @@
-import  {FormEvent} from 'react';
+import React,  {FormEvent} from 'react';
 import {
-    Box, Button, Divider,
+    Box, Button,
     Grid, InputLabel, TextField,
     Typography
 } from "@mui/material";
 import {Link} from "react-router-dom";
+import { useInput } from '@/hooks';
+import { validateEmail, validatePasswordLength } from '@/shared/utils/validation';
 
 const LoginFormComponent = () => {
+    const {
+			text: email,
+			shouldDisplayError: emailError,
+			hasBeenTouched: emailHasBeenTouched,
+			inputChangeHandler: emailChangeHandler,
+			inputBlurHandler: emailBlurHandler,
+			clearHandler: emailClearHandler,
+		} = useInput(validateEmail);
+
+		const {
+			text: password,
+			shouldDisplayError: passwordError,
+			hasBeenTouched: passwordHasBeenTouched,
+			inputChangeHandler: passwordChangeHandler,
+			inputBlurHandler: passwordBlurHandler,
+			clearHandler: passwordClearHandler,
+        } = useInput(validatePasswordLength);
+    
+    const [errorMsg, setErrorMsg] = React.useState<string>("");
+    function clearForm () {
+        emailClearHandler();
+        passwordClearHandler();
+    }
     const submitHandler = (e: FormEvent<HTMLElement>) => {
         e.preventDefault();
-        console.log('clicked')
+        if (!email || !password) {
+            setErrorMsg("All fields are required");
+            return;
+        }
+        if(emailError || passwordError) {
+            setErrorMsg("Somethign went wrong please check the form");
+            return;
+        }
+        setErrorMsg("");
+
+        const newUser: NewUser = {
+            email,
+            password,
+        }
+
+
+        clearForm();
     }
 
     return (
@@ -30,11 +71,19 @@ const LoginFormComponent = () => {
                     <Box>
                         <InputLabel
                             sx={{fontWeight: 500, marginTop: 1, color: "#000"}}
-                            htmlFor={"email"}>
+                            htmlFor={"email"}
+                            
+                        >
                             Email
                         </InputLabel>
                         <TextField
-
+                            value={email}
+                            onChange={emailChangeHandler}
+                            onBlur={emailBlurHandler}
+                            placeholder='example@gmail.com'
+                            helperText={emailError ? "Valid Email is required" : ""}
+                            error={emailError}
+                            required
                             sx={{width: "100%"}}
                             type={"email"}
                             name={"email"}
@@ -51,7 +100,11 @@ const LoginFormComponent = () => {
                             Password
                         </InputLabel>
                         <TextField
-
+                            value={password}
+                            onChange={passwordChangeHandler}
+                            onBlur={passwordBlurHandler}
+                            error={passwordError}
+                            helperText={passwordError ? "Valid Password is required" : ""}
                             sx={{width: "100%"}}
                             type={"password"}
                             name={"password"}
