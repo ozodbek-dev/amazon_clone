@@ -13,14 +13,14 @@ interface AsyncState {
 
 interface AuthState extends AsyncState {
 	user?: DisplayUser | null;
-	jwt: string|null;
+	jwt: string | null;
 	isAuthenticated?: boolean;
 }
 
 const storedUser: string | null = localStorage.getItem("user");
 const user: DisplayUser | null = !!storedUser ? JSON.parse(storedUser) : null;
 const storedJWT: string | null = localStorage.getItem("jwt");
-const jwt: string|null = !!storedJWT ? storedJWT : null;
+const jwt: string | null = !!storedJWT ? storedJWT : null;
 
 const initialState: AuthState = {
 	isLoading: false,
@@ -42,8 +42,8 @@ export const register = createAsyncThunk("auth/register", async (user: NewUser, 
 export const login = createAsyncThunk("auth/login", async (user: LoginUser, thunkAPI) => {
 	try {
 		return await authService.login(user);
-  } catch (err) {
-    console.log(err)
+	} catch (err) {
+		console.log(err);
 		return thunkAPI.rejectWithValue("Unable to login");
 	}
 });
@@ -98,7 +98,8 @@ export const authSlice = createSlice({
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.isAuthenticated = true;
-				state.jwt = action.payload?.token || null;
+				state.jwt = action.payload.jwt?.token || null;
+				state.user = action.payload.user;
 			})
 			.addCase(login.rejected, state => {
 				state.isLoading = false;

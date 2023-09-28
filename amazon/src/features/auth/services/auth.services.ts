@@ -13,14 +13,16 @@ const register = async (newUser: NewUser): Promise<DisplayUser | null> => {
 	return response.data;
 };
 
-const login = async (loginUser: LoginUser): Promise<JWT> => {
+const login = async (loginUser: LoginUser): Promise<{jwt:JWT, user:DisplayUser|null}> => {
 	const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, loginUser);
 	if (response.data) {
 		localStorage.setItem("jwt", response.data.token);
 		const decodedToken: DecodeJWT = jwt_decode(response.data.token);
-		localStorage.setItem("user", 	JSON.stringify(decodedToken.user));
+		localStorage.setItem("user", JSON.stringify(decodedToken.user));
+		
+		return {jwt:response.data, user:decodedToken.user};
 	}
-	return response.data;
+	return { jwt: response.data, user: null };
 };
 
 const logout = ():void => {
