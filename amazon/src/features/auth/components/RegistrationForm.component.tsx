@@ -1,9 +1,11 @@
 import React, { FormEvent, useEffect } from "react";
-import { Box, Button, Divider, Grid, InputLabel, TextField, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Box, Button, CircularProgress, Divider, Grid, InputLabel, TextField, Typography } from "@mui/material";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useInput } from "@/hooks";
 import { validPassowrdMatch, validateEmail, validateNameLength, validatePasswordLength } from "@/shared/utils/validation";
 import { NewUser } from "../models/NewUser.type";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux/hooks";
+import { register, reset } from "../auth.slice";
 
 const RegistrationFormComponent = () => {
 	const {
@@ -47,7 +49,21 @@ const RegistrationFormComponent = () => {
         emailClearHandler();
         passwordClearHandler();
         confirmPasswordClearHandler();
-    }
+		}
+	
+	const { isLoading, isSuccess, isAuthenticated } = useAppSelector(state => state.auth);
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (isSuccess) {
+			dispatch(reset());
+			clearForm();
+			navigate("/login");
+		}
+	},[isSuccess, dispatch])
+
+
 	const submitHandler = (e: FormEvent<HTMLElement>) => {
 		e.preventDefault();
 		if (!email || !password || !confirmPassword || !name) {
@@ -65,10 +81,7 @@ const RegistrationFormComponent = () => {
 			email,
 			password,
 		};
-        console.log(newUser);
-        
-        clearForm();
-        
+        dispatch(register(newUser));
 	};
 
 	useEffect(() => {
@@ -76,6 +89,9 @@ const RegistrationFormComponent = () => {
 			setErrorMsg("");
 		}
 	}, [name, email, password, confirmPassword]);
+
+    if (isAuthenticated) return <Navigate to='/' />;
+	if (isLoading) return <CircularProgress sx={{marginTop:"64px"}} />
 
 	return (
 		<Box sx={{ border: 1, padding: 2, borderColor: "#ccc", width: "350px", marginTop: 2 }}>

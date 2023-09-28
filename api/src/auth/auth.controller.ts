@@ -18,7 +18,12 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   login(@Body() user: ExistingUserDto): Promise<{ token: string } | null> {
-    console.log(user)
     return this.authService.login(user);
+  }
+
+  @Post('verify-jwt')
+  @HttpCode(HttpStatus.OK)
+  verifyJwt(@Body() payload: {jwt:string}): Promise<{ exp: number } | null> {
+    return this.authService.verifyJwt(payload.jwt);
   }
 }

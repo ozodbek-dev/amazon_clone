@@ -1,6 +1,5 @@
 import {FC} from "react";
-import AuthLayout
-    from "@/features/auth/AuthLayout.tsx";
+import AuthLayout from "@/features/auth/components/AuthLayout";
 import LoginFormComponent
     from "@/features/auth/components/LoginForm.component.tsx";
 

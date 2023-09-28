@@ -1,14 +1,22 @@
-import React,  {FormEvent} from 'react';
+import React,  {FormEvent, useEffect} from 'react';
 import {
     Box, Button,
+    CircularProgress,
     Grid, InputLabel, TextField,
     Typography
 } from "@mui/material";
-import {Link} from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import { useInput } from '@/hooks';
 import { validateEmail, validatePasswordLength } from '@/shared/utils/validation';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux/hooks';
+import { login, reset } from '../auth.slice';
+import { LoginUser } from '../models/LoginUser.interface';
 
 const LoginFormComponent = () => {
+    const { isAuthenticated, isLoading, isSuccess } = useAppSelector(state => state.auth);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    
     const {
 			text: email,
 			shouldDisplayError: emailError,
@@ -42,12 +50,24 @@ const LoginFormComponent = () => {
             setErrorMsg("Somethign went wrong please check the form");
             return;
         }
-        setErrorMsg("");
-
-
-
-        clearForm();
+       dispatch(login({email, password} as LoginUser));
     }
+
+    useEffect(() => {
+        if (isSuccess) {
+            dispatch(reset());
+            clearForm();
+        }
+    }, [dispatch, isSuccess])
+    
+
+    useEffect(() => {
+        if (!isAuthenticated) return
+           navigate('/')
+    }, [isAuthenticated])
+    
+    if(isAuthenticated) return <Navigate to='/' />
+	if (isLoading) return <CircularProgress sx={{ marginTop: "64px" }} />;
 
     return (
 

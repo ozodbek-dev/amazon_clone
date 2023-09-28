@@ -1,7 +1,7 @@
 import { actionModel } from "@/shared/models";
 import { InputAction, InputActionType } from "./models/input.action";
 import { InputState } from "./models/inputState.interface";
-import { ChangeEvent, useReducer } from "react";
+import { ChangeEvent, FocusEventHandler, useReducer } from "react";
 import { ValidatorFn } from "@/shared/utils/validation/models/validatorFn.model";
 const initialInputState: InputState = {
 	text: "",
@@ -39,11 +39,11 @@ const useInput = (validatirFn?: ValidatorFn) => {
     shouldDisplayError = !isValid && hasBeenTouched;
   }
   
-  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>)=>{
-    dispatch({type:InputAction.INPUT_ACTION_CHANGE, value:e.target.value})
+  const inputChangeHandler = (event: ChangeEvent<HTMLInputElement>)=>{
+    dispatch({type:InputAction.INPUT_ACTION_CHANGE, value:event.target.value})
   }
-  const inputBlurHandler = (e: FocusEvent<HTMLInputElement>)=>{
-    dispatch({type:InputAction.INPUT_ACTION_BLUR})
+  const inputBlurHandler = ()=>{
+    dispatch({ type: InputAction.INPUT_ACTION_BLUR })
   }
   const clearHandler = ()=>{
     dispatch({type:InputAction.INPUT_ACTION_CLEAR})
